@@ -1,26 +1,27 @@
-
 var createEditor = function() {
-    var lsKey = "elevatorCrushCode_v5";
+    var lsKey = 'elevatorCrushCode_v5';
 
-    var cm = CodeMirror.fromTextArea(document.getElementById("code"), {
+    var cm = CodeMirror.fromTextArea(document.getElementById('code'), {
         lineNumbers: true,
         indentUnit: 4,
         indentWithTabs: false,
-        theme: "solarized light",
-        mode: "javascript",
+        theme: 'solarized light',
+        mode: 'javascript',
         autoCloseBrackets: true,
         extraKeys: {
             // the following Tab key mapping is from http://codemirror.net/doc/manual.html#keymaps
             Tab: function(cm) {
-                var spaces = new Array(cm.getOption("indentUnit") + 1).join(" ");
+                var spaces = new Array(cm.getOption('indentUnit') + 1).join(
+                    ' ',
+                );
                 cm.replaceSelection(spaces);
-            }
-        }
+            },
+        },
     });
 
     // reindent on paste (adapted from https://github.com/ahuth/brackets-paste-and-indent/blob/master/main.js)
-    cm.on("change", function(codeMirror, change) {
-        if(change.origin !== "paste") {
+    cm.on('change', function(codeMirror, change) {
+        if (change.origin !== 'paste') {
             return;
         }
 
@@ -30,7 +31,7 @@ var createEditor = function() {
         function reindentLines(codeMirror, lineFrom, lineTo) {
             codeMirror.operation(function() {
                 codeMirror.eachLine(lineFrom, lineTo, function(lineHandle) {
-                    codeMirror.indentLine(lineHandle.lineNo(), "smart");
+                    codeMirror.indentLine(lineHandle.lineNo(), 'smart');
                 });
             });
         }
@@ -39,56 +40,68 @@ var createEditor = function() {
     });
 
     var reset = function() {
-        cm.setValue($("#default-elev-implementation").text().trim());
+        cm.setValue(
+            $('#default-elev-implementation')
+                .text()
+                .trim(),
+        );
     };
     var saveCode = function() {
         localStorage.setItem(lsKey, cm.getValue());
-        $("#save_message").text("Code saved " + new Date().toTimeString());
-        returnObj.trigger("change");
+        $('#save_message').text('Code saved ' + new Date().toTimeString());
+        returnObj.trigger('change');
     };
 
     var existingCode = localStorage.getItem(lsKey);
-    if(existingCode) {
+    if (existingCode) {
         cm.setValue(existingCode);
     } else {
         reset();
     }
 
-    $("#button_save").click(function() {
+    $('#button_save').click(function() {
         saveCode();
         cm.focus();
     });
 
-    $("#button_reset").click(function() {
-        if(confirm("Do you really want to reset to the default implementation?")) {
-            localStorage.setItem("develevateBackupCode", cm.getValue());
+    $('#button_reset').click(function() {
+        if (
+            confirm(
+                'Do you really want to reset to the default implementation?',
+            )
+        ) {
+            localStorage.setItem('develevateBackupCode', cm.getValue());
             reset();
         }
         cm.focus();
     });
 
-    $("#button_resetundo").click(function() {
-        if(confirm("Do you want to bring back the code as before the last reset?")) {
-            cm.setValue(localStorage.getItem("develevateBackupCode") || "");
+    $('#button_resetundo').click(function() {
+        if (
+            confirm(
+                'Do you want to bring back the code as before the last reset?',
+            )
+        ) {
+            cm.setValue(localStorage.getItem('develevateBackupCode') || '');
         }
         cm.focus();
     });
 
     var returnObj = riot.observable({});
     var autoSaver = _.debounce(saveCode, 1000);
-    cm.on("change", function() {
+    cm.on('change', function() {
         autoSaver();
     });
 
     returnObj.getCodeObj = function() {
-        console.log("Getting code...");
+        console.log('Getting code...');
         var code = cm.getValue();
         var obj;
         try {
             obj = getCodeObjFromCode(code);
-            returnObj.trigger("code_success");
-        } catch(e) {
-            returnObj.trigger("usercode_error", e);
+            returnObj.trigger('code_success');
+        } catch (e) {
+            returnObj.trigger('usercode_error', e);
             return null;
         }
         return obj;
@@ -98,51 +111,65 @@ var createEditor = function() {
     };
     returnObj.getCode = function() {
         return cm.getValue();
-    }
+    };
     returnObj.setDevTestCode = function() {
-        cm.setValue($("#devtest-elev-implementation").text().trim());
-    }
+        cm.setValue(
+            $('#devtest-elev-implementation')
+                .text()
+                .trim(),
+        );
+    };
 
-    $("#button_apply").click(function() {
-        returnObj.trigger("apply_code");
+    $('#button_apply').click(function() {
+        returnObj.trigger('apply_code');
     });
     return returnObj;
 };
 
-
 var createParamsUrl = function(current, overrides) {
-    return "#" + _.map(_.merge(current, overrides), function(val, key) {
-        return key + "=" + val;
-    }).join(",");
+    return (
+        '#' +
+        _.map(_.merge(current, overrides), function(val, key) {
+            return key + '=' + val;
+        }).join(',')
+    );
 };
 
-
-
 $(function() {
-    var tsKey = "elevatorTimeScale";
+    var tsKey = 'elevatorTimeScale';
     var editor = createEditor();
 
     var params = {};
 
-    var $world = $(".innerworld");
-    var $stats = $(".statscontainer");
-    var $feedback = $(".feedbackcontainer");
-    var $challenge = $(".challenge");
-    var $codestatus = $(".codestatus");
+    var $world = $('.innerworld');
+    var $stats = $('.statscontainer');
+    var $feedback = $('.feedbackcontainer');
+    var $challenge = $('.challenge');
+    var $codestatus = $('.codestatus');
 
-    var floorTempl = document.getElementById("floor-template").innerHTML.trim();
-    var elevatorTempl = document.getElementById("elevator-template").innerHTML.trim();
-    var elevatorButtonTempl = document.getElementById("elevatorbutton-template").innerHTML.trim();
-    var userTempl = document.getElementById("user-template").innerHTML.trim();
-    var challengeTempl = document.getElementById("challenge-template").innerHTML.trim();
-    var feedbackTempl = document.getElementById("feedback-template").innerHTML.trim();
-    var codeStatusTempl = document.getElementById("codestatus-template").innerHTML.trim();
+    var floorTempl = document.getElementById('floor-template').innerHTML.trim();
+    var elevatorTempl = document
+        .getElementById('elevator-template')
+        .innerHTML.trim();
+    var elevatorButtonTempl = document
+        .getElementById('elevatorbutton-template')
+        .innerHTML.trim();
+    var userTempl = document.getElementById('user-template').innerHTML.trim();
+    var challengeTempl = document
+        .getElementById('challenge-template')
+        .innerHTML.trim();
+    var feedbackTempl = document
+        .getElementById('feedback-template')
+        .innerHTML.trim();
+    var codeStatusTempl = document
+        .getElementById('codestatus-template')
+        .innerHTML.trim();
 
     var app = riot.observable({});
     app.worldController = createWorldController(1.0 / 60.0);
-    app.worldController.on("usercode_error", function(e) {
-        console.log("World raised code error", e);
-        editor.trigger("usercode_error", e);
+    app.worldController.on('usercode_error', function(e) {
+        console.log('World raised code error', e);
+        editor.trigger('usercode_error', e);
     });
 
     console.log(app.worldController);
@@ -152,7 +179,7 @@ $(function() {
     app.currentChallengeIndex = 0;
 
     app.startStopOrRestart = function() {
-        if(app.world.challengeEnded) {
+        if (app.world.challengeEnded) {
             app.startChallenge(app.currentChallengeIndex);
         } else {
             app.worldController.setPaused(!app.worldController.isPaused);
@@ -160,53 +187,101 @@ $(function() {
     };
 
     app.startChallenge = function(challengeIndex, autoStart) {
-        if(typeof app.world !== "undefined") {
+        if (typeof app.world !== 'undefined') {
             app.world.unWind();
             // TODO: Investigate if memory leaks happen here
         }
         app.currentChallengeIndex = challengeIndex;
-        app.world = app.worldCreator.createWorld(challenges[challengeIndex].options);
+        app.world = app.worldCreator.createWorld(
+            challenges[challengeIndex].options,
+        );
         window.world = app.world;
 
         clearAll([$world, $feedback]);
         presentStats($stats, app.world);
-        presentChallenge($challenge, challenges[challengeIndex], app, app.world, app.worldController, challengeIndex + 1, challengeTempl);
-        presentWorld($world, app.world, floorTempl, elevatorTempl, elevatorButtonTempl, userTempl);
+        presentChallenge(
+            $challenge,
+            challenges[challengeIndex],
+            app,
+            app.world,
+            app.worldController,
+            challengeIndex + 1,
+            challengeTempl,
+        );
+        presentWorld(
+            $world,
+            app.world,
+            floorTempl,
+            elevatorTempl,
+            elevatorButtonTempl,
+            userTempl,
+        );
 
-        app.worldController.on("timescale_changed", function() {
+        app.worldController.on('timescale_changed', function() {
             localStorage.setItem(tsKey, app.worldController.timeScale);
-            presentChallenge($challenge, challenges[challengeIndex], app, app.world, app.worldController, challengeIndex + 1, challengeTempl);
+            presentChallenge(
+                $challenge,
+                challenges[challengeIndex],
+                app,
+                app.world,
+                app.worldController,
+                challengeIndex + 1,
+                challengeTempl,
+            );
         });
 
-        app.world.on("stats_changed", function() {
-            var challengeStatus = challenges[challengeIndex].condition.evaluate(app.world);
-            if(challengeStatus !== null) {
+        app.world.on('stats_changed', function() {
+            var challengeStatus = challenges[challengeIndex].condition.evaluate(
+                app.world,
+            );
+            if (challengeStatus !== null) {
                 app.world.challengeEnded = true;
                 app.worldController.setPaused(true);
-                if(challengeStatus) {
-                    presentFeedback($feedback, feedbackTempl, app.world, "Success!", "Challenge completed", createParamsUrl(params, { challenge: (challengeIndex + 2)}));
+                if (challengeStatus) {
+                    presentFeedback(
+                        $feedback,
+                        feedbackTempl,
+                        app.world,
+                        'Success!',
+                        'Challenge completed',
+                        createParamsUrl(params, {
+                            challenge: challengeIndex + 2,
+                        }),
+                    );
                 } else {
-                    presentFeedback($feedback, feedbackTempl, app.world, "Challenge failed", "Maybe your program needs an improvement?", "");
+                    presentFeedback(
+                        $feedback,
+                        feedbackTempl,
+                        app.world,
+                        'Challenge failed',
+                        'Maybe your program needs an improvement?',
+                        '',
+                    );
                 }
             }
         });
 
         var codeObj = editor.getCodeObj();
-        console.log("Starting...");
-        app.worldController.start(app.world, codeObj, window.requestAnimationFrame, autoStart);
+        console.log('Starting...');
+        app.worldController.start(
+            app.world,
+            codeObj,
+            window.requestAnimationFrame,
+            autoStart,
+        );
     };
 
-    editor.on("apply_code", function() {
+    editor.on('apply_code', function() {
         app.startChallenge(app.currentChallengeIndex, true);
     });
-    editor.on("code_success", function() {
+    editor.on('code_success', function() {
         presentCodeStatus($codestatus, codeStatusTempl);
     });
-    editor.on("usercode_error", function(error) {
+    editor.on('usercode_error', function(error) {
         presentCodeStatus($codestatus, codeStatusTempl, error);
     });
-    editor.on("change", function() {
-        $("#fitness_message").addClass("faded");
+    editor.on('change', function() {
+        $('#fitness_message').addClass('faded');
         var codeStr = editor.getCode();
         // fitnessSuite(codeStr, true, function(results) {
         //     var message = "";
@@ -218,31 +293,41 @@ $(function() {
         //     $("#fitness_message").html(message).removeClass("faded");
         // });
     });
-    editor.trigger("change");
+    editor.trigger('change');
 
     riot.route(function(path) {
-        params = _.reduce(path.split(","), function(result, p) {
-            var match = p.match(/(\w+)=(\w+$)/);
-            if(match) { result[match[1]] = match[2]; } return result;
-        }, {});
+        params = _.reduce(
+            path.split(','),
+            function(result, p) {
+                var match = p.match(/(\w+)=(\w+$)/);
+                if (match) {
+                    result[match[1]] = match[2];
+                }
+                return result;
+            },
+            {},
+        );
         var requestedChallenge = 0;
         var autoStart = false;
         var timeScale = parseFloat(localStorage.getItem(tsKey)) || 2.0;
         _.each(params, function(val, key) {
-            if(key === "challenge") {
+            if (key === 'challenge') {
                 requestedChallenge = _.parseInt(val) - 1;
-                if(requestedChallenge < 0 || requestedChallenge >= challenges.length) {
-                    console.log("Invalid challenge index", requestedChallenge);
-                    console.log("Defaulting to first challenge");
+                if (
+                    requestedChallenge < 0 ||
+                    requestedChallenge >= challenges.length
+                ) {
+                    console.log('Invalid challenge index', requestedChallenge);
+                    console.log('Defaulting to first challenge');
                     requestedChallenge = 0;
                 }
-            } else if(key === "autostart") {
-                autoStart = val === "false" ? false : true;
-            } else if(key === "timescale") {
+            } else if (key === 'autostart') {
+                autoStart = val === 'false' ? false : true;
+            } else if (key === 'timescale') {
                 timeScale = parseFloat(val);
-            } else if(key === "devtest") {
+            } else if (key === 'devtest') {
                 editor.setDevTestCode();
-            } else if(key === "fullscreen") {
+            } else if (key === 'fullscreen') {
                 makeDemoFullscreen();
             }
         });
