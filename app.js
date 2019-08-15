@@ -2,12 +2,12 @@ var createEditor = function() {
     var lsKey = 'elevatorCrushCode_v5';
 
     var cm = CodeMirror.fromTextArea(document.getElementById('code'), {
-        lineNumbers: true,
+        autoCloseBrackets: true,
         indentUnit: 4,
         indentWithTabs: false,
-        theme: 'solarized light',
+        lineNumbers: true,
         mode: 'javascript',
-        autoCloseBrackets: true,
+        theme: 'solarized dark',
         extraKeys: {
             // the following Tab key mapping is from http://codemirror.net/doc/manual.html#keymaps
             Tab: function(cm) {
@@ -269,6 +269,7 @@ $(function() {
         });
 
         var codeObj = editor.getCodeObj();
+
         console.log('Starting...');
         app.worldController.start(
             app.world,
@@ -291,13 +292,26 @@ $(function() {
         $('#fitness_message').addClass('faded');
         var codeStr = editor.getCode();
         // fitnessSuite(codeStr, true, function(results) {
-        //     var message = "";
-        //     if(!results.error) {
-        //         message = "Fitness avg wait times: " + _.map(results, function(r){ return r.options.description + ": " + r.result.avgWaitTime.toPrecision(3) + "s" }).join("&nbsp&nbsp&nbsp");
+        //     var message = '';
+        //     if (!results.error) {
+        //         message =
+        //             'Fitness avg wait times: ' +
+        //             _.map(results, function(r) {
+        //                 return (
+        //                     r.options.description +
+        //                     ': ' +
+        //                     r.result.avgWaitTime.toPrecision(3) +
+        //                     's'
+        //                 );
+        //             }).join('&nbsp&nbsp&nbsp');
         //     } else {
-        //         message = "Could not compute fitness due to error: " + results.error;
+        //         message =
+        //             'Could not compute fitness due to error: ' +
+        //             results.error;
         //     }
-        //     $("#fitness_message").html(message).removeClass("faded");
+        //     $('#fitness_message')
+        //         .html(message)
+        //         .removeClass('faded');
         // });
     });
     editor.trigger('change');
