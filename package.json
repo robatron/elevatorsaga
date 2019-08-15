@@ -1,0 +1,29 @@
+{
+  "name": "elevatorsaga",
+  "version": "1.0.0",
+  "description": "Elevator Saga =================== The elevator programming game",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "format": "prettier --write **/*.js",
+    "start": "http-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magwo/elevatorsaga.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/magwo/elevatorsaga/issues"
+  },
+  "homepage": "https://github.com/magwo/elevatorsaga#readme",
+  "dependencies": {
+    "eslint": "^6.1.0",
+    "http-server": "^0.11.1",
+    "prettier": "^1.18.2"
+  }
+}
