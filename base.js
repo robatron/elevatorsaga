@@ -100,11 +100,12 @@ var createFrameRequester = function(timeStep) {
 };
 
 var getCodeObjFromCode = function(code) {
-    if (code.trim().substr(0, 1) == '{' && code.trim().substr(-1, 1) == '}') {
-        code = '(' + code + ')';
-    }
+    // if (code.trim().substr(0, 1) == '{' && code.trim().substr(-1, 1) == '}') {
+    //     code = '(' + code + ')';
+    // }
     /* jslint evil:true */
-    obj = eval(code);
+    // obj = eval(code);
+    obj = code;
     /* jshint evil:false */
     if (typeof obj.init !== 'function') {
         throw 'Code must contain an init function';

@@ -47,7 +47,8 @@ var createEditor = function() {
         );
     };
     var saveCode = function() {
-        localStorage.setItem(lsKey, cm.getValue());
+        // localStorage.setItem(lsKey, cm.getValue());
+        localStorage.setItem(lsKey, window.CUSTOM_SOLUTION);
         $('#save_message').text('Code saved ' + new Date().toTimeString());
         returnObj.trigger('change');
     };
@@ -70,7 +71,11 @@ var createEditor = function() {
                 'Do you really want to reset to the default implementation?',
             )
         ) {
-            localStorage.setItem('develevateBackupCode', cm.getValue());
+            // localStorage.setItem('develevateBackupCode', cm.getValue());
+            localStorage.setItem(
+                'develevateBackupCode',
+                window.CUSTOM_SOLUTION,
+            );
             reset();
         }
         cm.focus();
@@ -95,7 +100,8 @@ var createEditor = function() {
 
     returnObj.getCodeObj = function() {
         console.log('Getting code...');
-        var code = cm.getValue();
+        // var code = cm.getValue();
+        var code = window.CUSTOM_SOLUTION;
         var obj;
         try {
             obj = getCodeObjFromCode(code);
@@ -110,7 +116,8 @@ var createEditor = function() {
         cm.setValue(code);
     };
     returnObj.getCode = function() {
-        return cm.getValue();
+        // return cm.getValue();
+        return window.CUSTOM_SOLUTION;
     };
     returnObj.setDevTestCode = function() {
         cm.setValue(
