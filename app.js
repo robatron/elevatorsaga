@@ -55,7 +55,11 @@ var createEditor = function() {
 
     var existingCode = localStorage.getItem(lsKey);
     if (existingCode) {
-        cm.setValue(existingCode);
+        if (window.CUSTOM_SOLUTION) {
+            cm.setValue('(Using custom-solution.js)');
+        } else {
+            cm.setValue(existingCode);
+        }
     } else {
         reset();
     }
@@ -87,7 +91,11 @@ var createEditor = function() {
                 'Do you want to bring back the code as before the last reset?',
             )
         ) {
-            cm.setValue(localStorage.getItem('develevateBackupCode') || '');
+            if (window.CUSTOM_SOLUTION) {
+                cm.setValue('(Using custom-solution.js)');
+            } else {
+                cm.setValue(localStorage.getItem('develevateBackupCode') || '');
+            }
         }
         cm.focus();
     });
@@ -113,7 +121,11 @@ var createEditor = function() {
         return obj;
     };
     returnObj.setCode = function(code) {
-        cm.setValue(code);
+        if (window.CUSTOM_SOLUTION) {
+            cm.setValue('(Using custom-solution.js)');
+        } else {
+            cm.setValue(code);
+        }
     };
     returnObj.getCode = function() {
         // return cm.getValue();
