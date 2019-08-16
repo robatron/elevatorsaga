@@ -1,30 +1,32 @@
 const initElevator = (elevator, floors) => {
-    console.log('Initializing elevator');
     const middleFloor = Math.round(floors.length / 2);
 
-    // Elevator default state: Turn on BOTH indicators, go to middle floor
+    // Elevator default state: Turn on BOTH indicators (so passengers enter),
+    // then go to middle floor to wait
     const setElevatorDefaultState = () => {
         elevator.goToFloor(middleFloor);
         elevator.goingDownIndicator(true);
         elevator.goingUpIndicator(true);
     };
 
-    // When idle, send elevator to default state
-    elevator.on('idle', () => {
-        setElevatorDefaultState();
-    });
-
+    // When a floor button is pressed, push floor onto destination queue
     elevator.on('floor_button_pressed', floorNum => {
-        // Queue floor destination
         elevator.goToFloor(floorNum);
     });
 
+    // When elevator is passing a floor...
     elevator.on('passing_floor', (floorNum, direction) => {
         // Passing floor
     });
 
+    // When elevator is stopped at a floor...
     elevator.on('stopped_at_floor', floorNum => {
         // Maybe decide where to go next?
+    });
+
+    // When idle, send elevator to default state
+    elevator.on('idle', () => {
+        setElevatorDefaultState();
     });
 
     setElevatorDefaultState();
@@ -69,10 +71,12 @@ const initFloor = (floor, elevators) => {
 window.CUSTOM_SOLUTION = {
     init: (elevators, floors) => {
         console.log('USING EXTERNAL JS FILE');
+
+        console.log('Initializing elevators...');
         elevators.forEach(elevator => initElevator(elevator, elevators));
-        floors.forEach(floor => {
-            initFloor(floor, elevators);
-        });
+
+        console.log('Initializing floors...');
+        floors.forEach(floor => initFloor(floor, elevators));
     },
     update: (dt, elevators, floors) => {
         // We normally don't need to do anything here
