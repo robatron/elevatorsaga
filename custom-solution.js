@@ -19,9 +19,22 @@ const initElevator = (elevator, floors) => {
         // Passing floor
     });
 
-    // When elevator is stopped at a floor...
+    // When elevator is stopped at a floor, sort the destination queue
     elevator.on('stopped_at_floor', floorNum => {
-        // Maybe decide where to go next?
+        // Sort queue, remove duplicates, and remove current floor
+        elevator.destinationQueue = _.uniq(
+            sortDestinationsByClosest(elevator.destinationQueue, floorNum),
+        ).filter(destination => destination !== floorNum);
+
+        // update destination queue in memory
+        elevator.checkDestinationQueue();
+
+        console.log(
+            '>>> stopped at floor:',
+            floorNum,
+            'dest queue:',
+            elevator.destinationQueue,
+        );
     });
 
     // When idle, send elevator to default state
@@ -32,6 +45,7 @@ const initElevator = (elevator, floors) => {
     setElevatorDefaultState();
 };
 
+// Find the elevator that has the fewest number of destiations queued
 const getLeastBusyElevator = elevators => {
     let smallestDestinationQueue = Infinity;
     let leastBusyElevator = null;
@@ -46,24 +60,45 @@ const getLeastBusyElevator = elevators => {
     return leastBusyElevator;
 };
 
-const initFloor = (floor, elevators) => {
-    console.log('Initializing floor #', floor.floorNum());
+// Sort the destination queue by the closest -> furthest
+const sortDestinationsByClosest = (destinationQueue, currentLocation) => {
+    const newDestinationQueue = [];
+    const distancesToFloors = {};
 
+    // Fill a map of distances to floors that are that distance away from the
+    // current location
+    destinationQueue.forEach(destination => {
+        const distanceToFloor = Math.abs(currentLocation - destination);
+        distancesToFloors[distanceToFloor] =
+            distancesToFloors[distanceToFloor] || [];
+        distancesToFloors[distanceToFloor].push(destination);
+    });
+
+    // Sort the distances shortest -> furthest
+    const sortedDistances = Object.keys(distancesToFloors).sort(
+        (a, b) => a - b,
+    );
+
+    // Rebuild the destination queue and return
+    sortedDistances.forEach(distance => {
+        newDestinationQueue.push(distancesToFloors[distance]);
+    });
+
+    return newDestinationQueue.flat();
+};
+
+const initFloor = (floor, elevators) => {
+    // When the DOWN button is pressed, tell the least-busy elevator to go to
+    // that floor
     floor.on('down_button_pressed', () => {
         const leastBusyElevator = getLeastBusyElevator(elevators);
-
-        console.log('>>>', 'floor DOWN button pressed', floor.floorNum());
-        console.log('>>>', 'Least busy elevator', leastBusyElevator); // DEBUGGGG
-
         leastBusyElevator.goToFloor(floor.floorNum());
     });
 
+    // When the UP button is pressed, tell the least-busy elevator to go to that
+    // floor when it can
     floor.on('up_button_pressed', () => {
         const leastBusyElevator = getLeastBusyElevator(elevators);
-
-        console.log('>>>', 'floor UP button pressed', floor.floorNum());
-        console.log('>>>', 'Least busy elevator', leastBusyElevator); // DEBUGGGG
-
         leastBusyElevator.goToFloor(floor.floorNum());
     });
 };
